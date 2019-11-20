@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>frmmain</class>
+ <widget class="QDialog" name="frmmain">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1260</width>
+    <height>822</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MLSketchbook</string>
+  </property>
+  <widget class="QGraphicsView" name="image_disp">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>0</y>
+     <width>801</width>
+     <height>811</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="lstfilename">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>441</width>
+     <height>691</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="bttnprev">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>750</y>
+     <width>211</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;&lt;&lt;&lt;</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="bttnnext">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>750</y>
+     <width>211</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&gt;&gt;&gt;&gt;</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="bttnsetsrc_fldr">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>221</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Set Source Folder...</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="bttnsetdest_folder">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>0</y>
+     <width>221</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Set Ground Truth Folder...</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
