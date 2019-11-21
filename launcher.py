@@ -1,10 +1,12 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QDialog, QFileDialog, QListWidgetItem, QGraphicsScene
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread,QTimer, QPoint
-from PyQt5.QtGui import QPixmap, QPainter, QPen, QPainterPath
+from PyQt5.QtGui import QPixmap, QPainter, QPen, QPainterPath, QImage
 import PyQt5.QtCore as QtCore
 from mlsketchbookui import Ui_frmmain
 import os 
 import sys
+import cv2
+import numpy as np
 
 class Drawer(QWidget):
 	newPoint = pyqtSignal(QPoint)
@@ -13,10 +15,13 @@ class Drawer(QWidget):
 		self.path = QPainterPath()    
 		self.h=parent.height()
 		self.w=parent.width()
+		self.qImg = QPixmap(self.w, self.h).toImage() #.rgbSwapped()
 	def paintEvent(self, event):
 		painter = QPainter(self)
 		painter.drawPath(self.path)
-
+		painter_rep=QPainter(self.qImg)
+		painter_rep.setPen(Qt.white)
+		painter_rep.drawPath(self.path)
 	def mousePressEvent(self, event):
 		self.path.moveTo(event.pos())
 		self.update()
@@ -44,12 +49,51 @@ class mainui(QDialog):
 		self.qgs=QGraphicsScene()
 		self.drawer=Drawer(self.ui.image_disp)
 		self.qimg=QPixmap(self.ui.image_disp.width(),self.ui.image_disp.height())
-
+		self.aspect_ratio=16/9
+		self.qimg.fill(Qt.black)
 		#self.painter = QPainter(self.ui.image_disp)
+	
+	def get_cropped_img(self,image):
+		channels_count = 4
+		#image = pixmap.toImage()
+		b = image.bits()
+		# sip.voidptr must know size to support python buffer interface
+		b.setsize(image.height() * image.width() * channels_count)
+		arr = np.frombuffer(b, np.uint8).reshape((image.height(), image.width(), channels_count))
+		height=image.width()//self.aspect_ratio
+		y1=int((image.height()//2)-(height//2))
+		y2=int((image.height()//2)+(height//2))
+		image=arr[y1:y2,:]
+		return image
+
+	def draw_cnt(self,img):
+		#img_b=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+		_,img_b=cv2.threshold(img,250,255,cv2.THRESH_BINARY)
+		#cv2.imshow("tehe",img_b)
+		#img_b = np.float32(img_b)
+		im_floodfill = img_b.copy()
+	
+		# Mask used to flood filling.
+		# Notice the size needs to be 2 pixels than the image.
+		h, w = img_b.shape[:2]
+		mask = np.zeros((h+2, w+2), np.uint8)
+		
+		# Floodfill from point (0, 0)
+		cv2.floodFill(im_floodfill, mask, (0,0), 255)
+		img_b=cv2.bitwise_not(im_floodfill)
+		#img_b=cv2.bitwise_and(img,img,mask=img_b)
+		return img_b
 	
 	def save_img(self):
 		pixmap=self.ui.image_disp.grab()
-		pixmap.save("test.jpg")
+		pixmap2=self.drawer.qImg
+		img=self.get_cropped_img(pixmap2)
+		img=cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
+		cv2.imwrite("test.jpg",self.draw_cnt(img))
+		#pixmap2.save("rep.jpg")
+		
+		
+		#cv2.imwrite("test.jpg",image)
 
 	def src_item_clk(self,item):
 		filename=QListWidgetItem(item)
@@ -62,12 +106,12 @@ class mainui(QDialog):
 		#print(img_set_h)
 		img_h=self.qimg.height()
 		img_w=self.qimg.width()
-		print(img_h)
-		print(img_w)
-		aspect_ratio=img_w/img_h
-		img_set_h=int(1/aspect_ratio)*img_set_w
+		self.aspect_ratio=img_w/img_h
+		#self.qimg=self.qimg.scaled(img_set_h, img_set_h, Qt.KeepAspectRatio)
 		self.qimg=self.qimg.scaledToWidth(img_set_w)
-		#self.qimg=self.qimg.scaledToHeight(img_set_h)
+		print(self.qimg.height(),self.qimg.width())
+		#print(img_w)
+		
 		self.qgs=QGraphicsScene()
 		#qimg=qimg.scaledToWidth()
 		self.qgs.addPixmap(self.qimg)
