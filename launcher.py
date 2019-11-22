@@ -41,9 +41,11 @@ class mainui(QDialog):
 		self.drawing = False
 		self.lastPoint = QPoint()
 		self.src_fldr=None
+		self.dest_fldr=None
 		self.ui=Ui_frmmain()
 		self.ui.setupUi(self)
 		self.ui.bttnsetsrc_fldr.clicked.connect(self.open_src_fldr)
+		self.ui.bttnsetdest_folder.clicked.connect(self.open_dest_fldr)
 		self.ui.bttnnext.clicked.connect(self.save_img)
 		self.ui.lstfilename.itemClicked.connect(self.src_item_clk)
 		self.qgs=QGraphicsScene()
@@ -51,6 +53,10 @@ class mainui(QDialog):
 		self.qimg=QPixmap(self.ui.image_disp.width(),self.ui.image_disp.height())
 		self.aspect_ratio=16/9
 		self.qimg.fill(Qt.black)
+		self.curitem=None
+		self.cur_height=0
+		self.cur_width=0
+		
 		#self.painter = QPainter(self.ui.image_disp)
 	
 	def get_cropped_img(self,image):
@@ -85,20 +91,22 @@ class mainui(QDialog):
 		return img_b
 	
 	def save_img(self):
-		pixmap=self.ui.image_disp.grab()
+		#filename=self.ui.lstfilename.SelectItems()[0]
+		#print(filename)
+		file_path=os.path.join(self.dest_fldr,self.curitem)
+		#pixmap=self.ui.image_disp.grab()
 		pixmap2=self.drawer.qImg
 		img=self.get_cropped_img(pixmap2)
 		img=cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
-		cv2.imwrite("test.jpg",self.draw_cnt(img))
-		#pixmap2.save("rep.jpg")
+		img=self.draw_cnt(img)
 		
+		img=cv2.resize(img,(self.cur_width,self.cur_height))
+		cv2.imwrite(file_path,img)
 		
-		#cv2.imwrite("test.jpg",image)
-
 	def src_item_clk(self,item):
 		filename=QListWidgetItem(item)
 		self.load_img(filename.text())
-
+		self.curitem=filename.text()
 	def load_img(self,image_filename):
 		path=os.path.join(self.src_fldr,image_filename)
 		self.qimg=QPixmap(path)
@@ -106,6 +114,9 @@ class mainui(QDialog):
 		#print(img_set_h)
 		img_h=self.qimg.height()
 		img_w=self.qimg.width()
+		self.cur_height=img_h
+		self.cur_width=img_w
+		
 		self.aspect_ratio=img_w/img_h
 		#self.qimg=self.qimg.scaled(img_set_h, img_set_h, Qt.KeepAspectRatio)
 		self.qimg=self.qimg.scaledToWidth(img_set_w)
@@ -124,6 +135,10 @@ class mainui(QDialog):
 		self.ui.lstfilename.clear()
 		self.src_fldr=fldr
 		self.ui.lstfilename.addItems(list_files)
+
+	def open_dest_fldr(self):
+		fldr = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+		self.dest_fldr=fldr
 		
 if __name__=="__main__":
     app = QApplication(sys.argv)
