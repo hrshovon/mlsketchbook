@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QDialog, QFileDialog, QListWidgetItem, QGraphicsScene
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QDialog, QFileDialog, QListWidgetItem, QGraphicsScene, QGraphicsView
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread,QTimer, QPoint
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QPainterPath, QImage
 import PyQt5.QtCore as QtCore
@@ -16,16 +16,23 @@ class Drawer(QWidget):
 		self.h=parent.height()
 		self.w=parent.width()
 		self.qImg = QPixmap(self.w, self.h).toImage() #.rgbSwapped()
+		self.p=parent
+		self.clrev=False
 	def paintEvent(self, event):
 		painter = QPainter(self)
-		painter.drawPath(self.path)
 		painter_rep=QPainter(self.qImg)
+		#painter.eraseRect(self.p.sceneRect())	
+			
+		painter.drawPath(self.path)
 		painter_rep.setPen(Qt.white)
 		painter_rep.drawPath(self.path)
 	def mousePressEvent(self, event):
 		self.path.moveTo(event.pos())
 		self.update()
-
+	def clear(self):
+		self.path = QPainterPath()  
+		#self.qImg = QPixmap(self.w, self.h).toImage()  
+			
 	def mouseMoveEvent(self, event):
 		self.path.lineTo(event.pos())
 		self.newPoint.emit(event.pos())
@@ -33,7 +40,8 @@ class Drawer(QWidget):
 
 	def sizeHint(self):
 		return QtCore.QSize(self.w, self.h)
-
+	
+		
 
 class mainui(QDialog):
 	def __init__(self):
@@ -46,7 +54,7 @@ class mainui(QDialog):
 		self.ui.setupUi(self)
 		self.ui.bttnsetsrc_fldr.clicked.connect(self.open_src_fldr)
 		self.ui.bttnsetdest_folder.clicked.connect(self.open_dest_fldr)
-		self.ui.bttnnext.clicked.connect(self.save_img)
+		self.ui.bttnnext.clicked.connect(self.next)
 		self.ui.lstfilename.itemClicked.connect(self.src_item_clk)
 		self.qgs=QGraphicsScene()
 		self.drawer=Drawer(self.ui.image_disp)
@@ -58,7 +66,25 @@ class mainui(QDialog):
 		self.cur_width=0
 		
 		#self.painter = QPainter(self.ui.image_disp)
-	
+	def prev(self):
+		self.save_img()
+		
+		sIndex=self.ui.lstfilename.currentRow()
+		if self.ui.lstfilename.currentRow()>0:
+			self.ui.lstfilename.setCurrentRow(sIndex-1)
+			self.src_item_clk(self.ui.lstfilename.currentItem())
+	def next(self):
+		self.save_img()
+		print(self.ui.image_disp.items())
+		self.qgs.clear()
+		self.ui.image_disp.items().clear()
+		self.ui.image_disp.viewport().update()
+		self.drawer.clear()
+		self.drawer.qImg = QPixmap(self.ui.image_disp.width(), self.ui.image_disp.height()).toImage()
+		sIndex=self.ui.lstfilename.currentRow()
+		if self.ui.lstfilename.currentRow()<self.ui.lstfilename.count()-1:
+			self.ui.lstfilename.setCurrentRow(sIndex+1)
+			self.src_item_clk(self.ui.lstfilename.currentItem())
 	def get_cropped_img(self,image):
 		channels_count = 4
 		#image = pixmap.toImage()
@@ -102,7 +128,7 @@ class mainui(QDialog):
 		
 		img=cv2.resize(img,(self.cur_width,self.cur_height))
 		cv2.imwrite(file_path,img)
-		
+	
 	def src_item_clk(self,item):
 		filename=QListWidgetItem(item)
 		self.load_img(filename.text())

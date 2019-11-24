@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mlsketchbookui.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.2
+# Created by: PyQt5 UI code generator 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -18,13 +18,13 @@ class Ui_frmmain(object):
         self.image_disp.setGeometry(QtCore.QRect(460, 0, 801, 811))
         self.image_disp.setObjectName("image_disp")
         self.lstfilename = QtWidgets.QListWidget(frmmain)
-        self.lstfilename.setGeometry(QtCore.QRect(10, 50, 441, 691))
+        self.lstfilename.setGeometry(QtCore.QRect(10, 50, 441, 561))
         self.lstfilename.setObjectName("lstfilename")
         self.bttnprev = QtWidgets.QPushButton(frmmain)
-        self.bttnprev.setGeometry(QtCore.QRect(10, 750, 211, 61))
+        self.bttnprev.setGeometry(QtCore.QRect(10, 620, 211, 61))
         self.bttnprev.setObjectName("bttnprev")
         self.bttnnext = QtWidgets.QPushButton(frmmain)
-        self.bttnnext.setGeometry(QtCore.QRect(240, 750, 211, 61))
+        self.bttnnext.setGeometry(QtCore.QRect(240, 620, 211, 61))
         self.bttnnext.setObjectName("bttnnext")
         self.bttnsetsrc_fldr = QtWidgets.QPushButton(frmmain)
         self.bttnsetsrc_fldr.setGeometry(QtCore.QRect(10, 0, 221, 51))
@@ -32,6 +32,9 @@ class Ui_frmmain(object):
         self.bttnsetdest_folder = QtWidgets.QPushButton(frmmain)
         self.bttnsetdest_folder.setGeometry(QtCore.QRect(230, 0, 221, 51))
         self.bttnsetdest_folder.setObjectName("bttnsetdest_folder")
+        self.bttnclr = QtWidgets.QPushButton(frmmain)
+        self.bttnclr.setGeometry(QtCore.QRect(240, 690, 211, 121))
+        self.bttnclr.setObjectName("bttnclr")
 
         self.retranslateUi(frmmain)
         QtCore.QMetaObject.connectSlotsByName(frmmain)
@@ -43,3 +46,4 @@ class Ui_frmmain(object):
         self.bttnnext.setText(_translate("frmmain", ">>>>"))
         self.bttnsetsrc_fldr.setText(_translate("frmmain", "Set Source Folder..."))
         self.bttnsetdest_folder.setText(_translate("frmmain", "Set Ground Truth Folder..."))
+        self.bttnclr.setText(_translate("frmmain", "Clear Drawing"))
