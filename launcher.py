@@ -22,7 +22,7 @@ class Drawer(QWidget):
 		painter = QPainter(self)
 		painter_rep=QPainter(self.qImg)
 		#painter.eraseRect(self.p.sceneRect())	
-			
+		painter.setPen(Qt.red)	
 		painter.drawPath(self.path)
 		painter_rep.setPen(Qt.white)
 		painter_rep.drawPath(self.path)
