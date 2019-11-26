@@ -31,6 +31,9 @@ class Drawer(QWidget):
 		self.update()
 	def clear(self):
 		self.path = QPainterPath()  
+		self.update()
+		self.qImg = QPixmap(self.w, self.h).toImage()
+		self.qImg.fill(Qt.black)
 		#self.qImg = QPixmap(self.w, self.h).toImage()  
 			
 	def mouseMoveEvent(self, event):
@@ -55,6 +58,7 @@ class mainui(QDialog):
 		self.ui.bttnsetsrc_fldr.clicked.connect(self.open_src_fldr)
 		self.ui.bttnsetdest_folder.clicked.connect(self.open_dest_fldr)
 		self.ui.bttnnext.clicked.connect(self.next)
+		self.ui.bttnclr.clicked.connect(self.clearall)
 		self.ui.lstfilename.itemClicked.connect(self.src_item_clk)
 		self.qgs=QGraphicsScene()
 		self.drawer=Drawer(self.ui.image_disp)
@@ -66,6 +70,10 @@ class mainui(QDialog):
 		self.cur_width=0
 		
 		#self.painter = QPainter(self.ui.image_disp)
+	def clearall(self):
+		self.drawer.clear()
+	
+	
 	def prev(self):
 		self.save_img()
 		
@@ -75,12 +83,13 @@ class mainui(QDialog):
 			self.src_item_clk(self.ui.lstfilename.currentItem())
 	def next(self):
 		self.save_img()
-		print(self.ui.image_disp.items())
-		self.qgs.clear()
-		self.ui.image_disp.items().clear()
-		self.ui.image_disp.viewport().update()
+		#print(self.ui.image_disp.items())
+		#self.qgs.clear()
+		#self.ui.image_disp.items().clear()
+		#self.ui.image_disp.viewport().update()
 		self.drawer.clear()
-		self.drawer.qImg = QPixmap(self.ui.image_disp.width(), self.ui.image_disp.height()).toImage()
+		#self.drawer=Drawer(self.ui.image_disp)
+		#self.drawer.qImg = QPixmap(self.ui.image_disp.width(), self.ui.image_disp.height()).toImage()
 		sIndex=self.ui.lstfilename.currentRow()
 		if self.ui.lstfilename.currentRow()<self.ui.lstfilename.count()-1:
 			self.ui.lstfilename.setCurrentRow(sIndex+1)
