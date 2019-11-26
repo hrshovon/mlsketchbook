@@ -76,7 +76,7 @@ class mainui(QDialog):
 	
 	def prev(self):
 		self.save_img()
-		
+		self.drawer.clear()
 		sIndex=self.ui.lstfilename.currentRow()
 		if self.ui.lstfilename.currentRow()>0:
 			self.ui.lstfilename.setCurrentRow(sIndex-1)
